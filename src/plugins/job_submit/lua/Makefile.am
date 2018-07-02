@@ -13,6 +13,11 @@ if HAVE_LUA
 pkglib_LTLIBRARIES = job_submit_lua.la
 job_submit_lua_la_SOURCES = job_submit_lua.c
 job_submit_lua_la_LDFLAGS = $(PLUGIN_FLAGS) $(lua_LIBS)
+job_submit_lua_la_LIBADD = $(top_builddir)/src/common/libslurmlua.la
+
+force:
+$job_submit_lua_la_LIBADD) : force
+	@cd `dirname $@` && $(MAKE) `basename $@`
 
 else
 EXTRA_job_submit_lua_la_SOURCES = job_submit_lua.c

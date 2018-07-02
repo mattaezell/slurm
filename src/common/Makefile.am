@@ -12,7 +12,7 @@ AUTOMAKE_OPTIONS = foreign
 
 AM_CPPFLAGS     = -I$(top_srcdir) $(lua_CFLAGS)
 
-noinst_PROGRAMS = libcommon.o libeio.o libspank.o
+noinst_PROGRAMS = libcommon.o libeio.o libspank.o libslurmlua.o
 # This is needed if compiling on windows
 EXEEXT=
 
@@ -20,7 +20,8 @@ noinst_LTLIBRARIES = 			\
 	libcommon.la 			\
 	libdaemonize.la 		\
 	libeio.la  			\
-	libspank.la
+	libspank.la			\
+	libslurmlua.la
 
 libcommon_la_SOURCES = 			\
 	assoc_mgr.c assoc_mgr.h 	\
@@ -150,6 +151,9 @@ libspank_la_SOURCES = \
 	plugstack.c plugstack.h \
 	optz.c      optz.h
 
+libslurmlua_la_SOURCES = \
+	slurm_lua.c slurm_lua.h
+
 libcommon_la_LIBADD   = $(DL_LIBS)
 
 libcommon_la_LDFLAGS  = $(LIB_LDFLAGS) -module --export-dynamic
@@ -171,6 +175,12 @@ libeio.o$(EXEEXT) :  $(libeio_la_OBJECTS) $(libeio_la_DEPENDENCIES)
 libspank_o_SOURCES =
 libspank.o$(EXEEXT) :  $(libspank_la_OBJECTS) $(libspank_la_DEPENDENCIES)
 	$(LINK)  $(libspank_la_OBJECTS)
+
+# This was made so we could export all symbols from libslurmlua
+# on multiple platforms
+libslurmlua_o_SOURCES =
+libslurmlua.o$(EXEEXT) :  $(libslurmlua_la_OBJECTS) $(libslurmlua_la_DEPENDENCIES)
+	$(LINK)  $(libslurmlua_la_OBJECTS)
 
 
 global_defaults.c : $(top_builddir)/config.h Makefile
