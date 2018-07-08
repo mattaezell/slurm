@@ -247,6 +247,8 @@ static int _job_rec_field(lua_State *L, const struct job_record *job_ptr,
 {
 	int i;
 
+	xassert(verify_lock(JOB_LOCK, READ_LOCK));
+
 	if (job_ptr == NULL) {
 		error("_job_rec_field: job_ptr is NULL");
 		lua_pushnil (L);
@@ -422,6 +424,8 @@ void slurm_lua_update_jobs_global(lua_State *L, List job_list, time_t *last_lua_
 	char job_id_buf[11]; /* Big enough for a uint32_t */
 	ListIterator iter;
 	struct job_record *job_ptr;
+
+	xassert(verify_lock(JOB_LOCK, READ_LOCK));
 
 	if (last_lua_jobs_update != NULL) {
 		if (*last_lua_jobs_update >= last_job_update) {
@@ -1205,6 +1209,8 @@ void slurm_lua_push_job_rec(lua_State *L, struct job_record *job_ptr)
 static int _part_rec_field(lua_State *L, const struct part_record *part_ptr,
                            const char *name)
 {
+	xassert(verify_lock(PART_LOCK, READ_LOCK));
+
 	if (part_ptr == NULL) {
 		error("_get_part_field: part_ptr is NULL");
 		lua_pushnil (L);
@@ -1289,6 +1295,8 @@ static bool _user_can_use_part(uint32_t user_id, uint32_t submit_uid,
 {
 	int i;
 
+	xassert(verify_lock(PART_LOCK, READ_LOCK));
+
 	if (user_id == 0) {
 		if (part_ptr->flags & PART_FLAG_NO_ROOT)
 			return false;
@@ -1312,6 +1320,8 @@ void slurm_lua_push_partition_list(lua_State *L, List part_list, uint32_t user_i
 {
 	ListIterator part_iterator;
 	struct part_record *part_ptr;
+
+	xassert(verify_lock(PART_LOCK, READ_LOCK));
 
 	lua_newtable(L);
 	part_iterator = list_iterator_create(part_list);
